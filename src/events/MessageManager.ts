@@ -5,6 +5,8 @@ import ExportManager from '../programs/ExportManager';
 import {USA_IMAGE_URL, CANADA_IMAGE_URL, UK_IMAGE_URL, AUSTRALIA_IMAGE_URL } from '../const'
 import Tools from '../common/tools';
 import { hasRole, textLog, getMember } from '../common/moderator';
+import ChessManager, { findGameByUser } from '../programs/chess/ChessGameStart';
+import { ChessMove } from '../programs/chess/ChessGameMove';
 
 class MessageManager {
     message: Discord.Message;
@@ -83,7 +85,12 @@ class MessageManager {
                 if(words.includes("@group")) GroupManager(this.message, false)
                 break;
 
+            case "board-games":
+                if(words.includes("@group")) GroupManager(this.message, false)
+                if(firstWord === "!chess") ChessManager(this.message);
+                break;
             }
+
             if(firstWord === "!fiyesta") Ticket(this.message, "fiyesta");
             if(firstWord === "!shoutout") Ticket(this.message, "shoutout");
             if (firstWord === "!vote") this.addVote()
@@ -98,6 +105,8 @@ class MessageManager {
         }
 
         async routeDm() {
+            const authorChessGame = findGameByUser(this.message.author.id)
+            if(authorChessGame) ChessMove(this.message);
             this.message.reply("I've sent your name request to the mods, hopefully they answer soon! In the meantime, you're free to roam around the server and explore. Maybe post an introduction to get started? :grin:")
             const message = `Username: ${this.message.author.toString()} would like to rename to "${this.message.content}". Allow?`;
             const sentMessage = await textLog(message)
