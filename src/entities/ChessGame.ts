@@ -15,6 +15,9 @@ export class ChessGame {
     @Column("text", {nullable: true})
     winningColor: "black" | "white" | null;
 
+    @Column("text")
+    lastBoardLayout: string;
+
 }
 
 export const ChessGameRepository = async () => {

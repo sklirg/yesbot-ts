@@ -106,7 +106,10 @@ class MessageManager {
 
         async routeDm() {
             const authorChessGame = findGameByUser(this.message.author.id)
-            if(authorChessGame) ChessMove(this.message);
+            if(authorChessGame) {
+                ChessMove(this.message, await authorChessGame)
+                return;
+            };
             this.message.reply("I've sent your name request to the mods, hopefully they answer soon! In the meantime, you're free to roam around the server and explore. Maybe post an introduction to get started? :grin:")
             const message = `Username: ${this.message.author.toString()} would like to rename to "${this.message.content}". Allow?`;
             const sentMessage = await textLog(message)

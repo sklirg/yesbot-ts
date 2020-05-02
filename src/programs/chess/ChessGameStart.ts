@@ -2,9 +2,12 @@ import Discord, { TextChannel, DMChannel } from 'discord.js';
 import Tools from '../../common/tools';
 import { promises } from 'dns';
 import { ChessGameRepository } from '../../entities/ChessGame';
+import { fenToImage } from "./ChessGameMove";
 
 
 export default async function ChessGameStart(message: Discord.Message) {
+
+    const starterBoard = `rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1`
 
     const chessGames = await ChessGameRepository();
 
@@ -45,11 +48,16 @@ export default async function ChessGameStart(message: Discord.Message) {
             message.channel.send(`${lastUser.toString()}, you cannot accept this challenge, you are still in game with <@${currentOp}>!`);
             return;
         }
+
+        //! FEN Notation for chess starting board
+        
         const dmChannels = await Promise.all([lastUser.createDM(), message.author.createDM()])
         dmChannels.forEach((channel:DMChannel) => {
             const oponent = channel.recipient === message.author ? channel.recipient : message.author
             const pieceSelection = channel.recipient === message.author ? "You are the challenger, which means your pieces are white. It is your turn. Please enter a valid AN move. (https://blog.chesshouse.com/how-to-read-and-write-algebraic-chess-notation/)" : "You are the challengee, which means your pieces are black. You must wait for your opponent to move."
             channel.send(`You have begun a chess match with ${oponent.toString()}. This DM channel is now entering chess mode. **To exit chess mode, you must type !chess quit. This will forfeit the current game immediately.**\n\n${pieceSelection}`)
+            const attachment = new Discord.MessageAttachment(fenToImage(starterBoard))
+            channel.send(attachment);
         })
         
     }
@@ -61,7 +69,8 @@ export default async function ChessGameStart(message: Discord.Message) {
         console.info("ChessGame: Creating database record")
         chessGames.save({
             whitePlayer: lastUser.id,
-            blackPlayer: message.author.id
+            blackPlayer: message.author.id,
+            lastBoardLayout: starterBoard
         });
         console.log("Chess game successfully started.")
     } catch (e) {
