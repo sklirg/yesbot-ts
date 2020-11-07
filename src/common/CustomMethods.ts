@@ -76,9 +76,9 @@ export const abuseMe = (message: Message) => {
 
   const userToTag = taggedUser ? taggedUser.id : message.author.id;
   const cleanMessage = message.cleanContent.split(/\s+/);
-  cleanMessage.shift();
-  const joinedMsg = cleanMessage.join(" ");
-  const reply = `<@${userToTag}> *\`${joinedMsg}\`* translated to English means *${
+  // cleanMessage.shift();
+  // const joinedMsg = cleanMessage.join(" ");
+  const reply = `<@${userToTag}> *\`${cleanMessage}\`* translated to test English means *${
     replies[Math.floor(Math.random() * replies.length)]
   }*`;
   message.channel.send(reply);
