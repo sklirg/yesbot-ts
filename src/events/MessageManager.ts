@@ -245,7 +245,7 @@ class MessageManager {
     if (this.message.content.toLowerCase().startsWith("!group toggle"))
       GroupManager(this.message, true);
 
-    if (words.includes("@group")) GroupManager(this.message, false);
+    // if (words.includes("@group")) GroupManager(this.message, false);
   }
 
   async routeDm() {
